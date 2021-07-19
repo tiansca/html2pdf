@@ -62,8 +62,10 @@ router.get('/', async (ctx, next) => {
 
 router.get('/download', async (ctx, next) => {
   const pdfPath = path.resolve(__dirname, '../views/myResume.pdf')
-  // console.log(pdfPath)
-  await send(ctx, pdfPath)
+  console.log(pdfPath)
+  await send(ctx, 'myResume.pdf', {
+    root:path.resolve(__dirname, '../views/')
+  })
 })
 
 module.exports = router
