@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer')
+const Path = require('path')
 const createOnline = async (path) => {
   const browser = await puppeteer.launch({
 
@@ -71,12 +72,11 @@ const createOnline = async (path) => {
         <div><span class="pageNumber">
         </span> / <span class="totalPages"></span></div>
         </div>`
-  console.log(dimensions.width)
-  console.log(dimensions.arr)
+  console.log(Path.resolve(__dirname, '../views/myResume.pdf'))
 
   await page.pdf({
     // format: 'A4',
-    path: 'views/myResume.pdf',
+    path: Path.resolve(__dirname, '../views/myResume.pdf'),
     printBackground: true,
     // preferCSSPageSize: true,
     fullPage: true,
