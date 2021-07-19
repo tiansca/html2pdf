@@ -52,17 +52,16 @@ const creat = async (pdf_string) => {
 
 router.get('/', async (ctx, next) => {
   console.log(ctx.query.path)
-  const pdfPath = path.resolve(__dirname, '../views/myResume.pdf')
   await createOnline(ctx.query.path || 'https://www.baidu.com')
   // 已stream传输，前端下载而非预览，自定义文件名
   // ctx.set('Content-Type', 'application/octet-stream')
   // ctx.set("Content-Disposition", "attachment;filename=" + 'report.pdf');
-  await send(ctx, pdfPath)
+  await send(ctx, 'myResume.pdf', {
+    root:path.resolve(__dirname, '../views/')
+  })
 })
 
 router.get('/download', async (ctx, next) => {
-  const pdfPath = path.resolve(__dirname, '../views/myResume.pdf')
-  console.log(pdfPath)
   await send(ctx, 'myResume.pdf', {
     root:path.resolve(__dirname, '../views/')
   })
