@@ -52,7 +52,11 @@ const creat = async (pdf_string) => {
 
 router.get('/', async (ctx, next) => {
   console.log(ctx.query.path)
-  await createOnline(ctx.query.path || 'https://www.baidu.com')
+  let url = 'https://www.baidu.com'
+  if (ctx.query.path) {
+    url = encodeURIComponent(ctx.query.path)
+  }
+  await createOnline(url)
   // 已stream传输，前端下载而非预览，自定义文件名
   // ctx.set('Content-Type', 'application/octet-stream')
   // ctx.set("Content-Disposition", "attachment;filename=" + 'report.pdf');
