@@ -2,6 +2,7 @@ const router = require('koa-router')()
 const puppeteer = require('puppeteer')
 const send = require('koa-send')
 const createOnline = require('../utils/createOnline')
+const path = require('path')
 
 const creat = async (pdf_string) => {
   const browser = await puppeteer.launch({
@@ -51,15 +52,18 @@ const creat = async (pdf_string) => {
 
 router.get('/', async (ctx, next) => {
   console.log(ctx.query.path)
+  const pdfPath = path.resolve(__dirname, '../views/myResume.pdf')
   await createOnline(ctx.query.path || 'https://www.baidu.com')
   // 已stream传输，前端下载而非预览，自定义文件名
   // ctx.set('Content-Type', 'application/octet-stream')
   // ctx.set("Content-Disposition", "attachment;filename=" + 'report.pdf');
-  await send(ctx, 'views/myResume.pdf')
+  await send(ctx, pdfPath)
 })
 
 router.get('/download', async (ctx, next) => {
-  await send(ctx, 'views/myResume.pdf')
+  const pdfPath = path.resolve(__dirname, '../views/myResume.pdf')
+  // console.log(pdfPath)
+  await send(ctx, pdfPath)
 })
 
 module.exports = router
