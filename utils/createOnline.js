@@ -2,21 +2,29 @@ const puppeteer = require('puppeteer')
 const Path = require('path')
 const createOnline = async (path) => {
   const browser = await puppeteer.launch({
-    args: ['--no-sandbox'],
-    // args: ['--disable-dev-shm-usage', '--no-sandbox'],
+    // args: ['--no-sandbox'],
+    args: ['--disable-dev-shm-usage', '--no-sandbox']
     // args: ['--disable-setuid-sandbox', '--no-sandbox'],
     // args: ['--disable-setuid-sandbox', '--no-sandbox', '--disable-dev-shm-usage'],
   });
+  try {
+    const page = await browser.newPage();
+  }  catch (e) {
+    await browser.close();
+  }
 
-  const page = await browser.newPage();
+  try {
+    await page.goto(path, {
+      waitUntil: ['load', // Remove the timeout
+        'domcontentloaded',  //等待 “domcontentloaded” 事件触发
+        'networkidle0',
+      ],
+      timeout: 1000 * 60 * 3,
+    })
+  } catch (e) {
+    await browser.close();
+  }
 
-  await page.goto(path, {
-    waitUntil: ['load', // Remove the timeout
-      'domcontentloaded',  //等待 “domcontentloaded” 事件触发
-      'networkidle0',
-    ],
-    timeout: 1000 * 60 * 3,
-  })
 
   // 添加css样式
   // await page.addStyleTag({
