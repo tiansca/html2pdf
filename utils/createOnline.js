@@ -7,10 +7,12 @@ const createOnline = async (path) => {
     // args: ['--disable-setuid-sandbox', '--no-sandbox'],
     // args: ['--disable-setuid-sandbox', '--no-sandbox', '--disable-dev-shm-usage'],
   });
+  let page = null
   try {
-    const page = await browser.newPage();
+    page = await browser.newPage();
   }  catch (e) {
     await browser.close();
+    return
   }
 
   try {
