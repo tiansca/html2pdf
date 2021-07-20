@@ -56,8 +56,9 @@ router.get('/', async (ctx, next) => {
   if (ctx.query.path) {
     url = ctx.query.path
   }
+  const lazy = ctx.query.lazy || false
   console.log('url', url)
-  await createOnline(url)
+  await createOnline(url,  lazy)
   // 已stream传输，前端下载而非预览，自定义文件名
   // ctx.set('Content-Type', 'application/octet-stream')
   // ctx.set("Content-Disposition", "attachment;filename=" + 'report.pdf');
@@ -72,8 +73,8 @@ router.get('/download', async (ctx, next) => {
   })
 })
 router.get('/page', async (ctx, next) => {
-  await ctx.render('index.ejs', {title: 'html2pdf', ip: '182.92.210.246'})
-  // await ctx.render('index.ejs', {title: 'html2pdf', ip: 'localhost'})
+  // await ctx.render('index.ejs', {title: 'html2pdf', ip: '182.92.210.246'})
+  await ctx.render('index.ejs', {title: 'html2pdf', ip: 'localhost'})
 })
 
 module.exports = router

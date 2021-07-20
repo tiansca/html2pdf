@@ -9,7 +9,7 @@
     /*  padding: 50px;*/
     /*  width: 800px*/
     /*}*/
-    input{
+    #url{
       line-height: 28px;
       margin: 0 4px;
       width: 200px;
@@ -36,6 +36,10 @@
     <input type="text" id="url">
 
   </div>
+  <div style="display: flex;align-items: center;justify-content: center;margin: 20px 0">
+    <input type="checkbox" value="lazy" name="lazy" id="lazy">
+    <label style="font-size: 14px;color: #333" for="lazy">是否开启懒加载</label>
+  </div>
   <div style="display: flex;align-items: center;justify-content: center">
     <button onclick="submit()">转为PDF</button>
   </div>
@@ -53,6 +57,12 @@
       url = `http://${url}`
     }
     url = encodeURIComponent(url)
+    const lazy = document.querySelector('#lazy').checked
+    console.log(lazy)
+    if (lazy) {
+      window.open(`http://<%=ip%>:3008?path=${url}&lazy=true`)
+      return;
+    }
     window.open(`http://<%=ip%>:3008?path=${url}`)
   }
 </script>

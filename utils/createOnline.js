@@ -1,6 +1,8 @@
 const puppeteer = require('puppeteer')
 const Path = require('path')
-const createOnline = async (path) => {
+const sleep = require('../utils/sleep')
+
+const createOnline = async (path, lazy) => {
   const browser = await puppeteer.launch({
     // args: ['--no-sandbox'],
     args: ['--disable-dev-shm-usage', '--no-sandbox']
@@ -19,32 +21,25 @@ const createOnline = async (path) => {
     await page.goto(path, {
       waitUntil: ['load', // Remove the timeout
         'domcontentloaded',  //等待 “domcontentloaded” 事件触发
-        'networkidle2',
+        // 'networkidle2', // 500ms内请求数不超过2个
       ],
       timeout: 1000 * 60 * 3,
     })
   } catch (e) {
     await browser.close();
   }
-
-
-  // 添加css样式
-  // await page.addStyleTag({
-  //
-  //   path: 'views/index.css'
-  //
-  // })
-  // const dimensions = await page.evaluate(() => {
-  //   return {
-  //     width: document.querySelector("#app").scrollWidth + 100,
-  //     height: document.getElementById("app").scrollHeight + 100,
-  //     deviceScaleFactor: window.devicePixelRatio
-  //   };
-  // });
   await page.addStyleTag({
     content: 'tr,img{page-break-before: always;page-break-inside:avoid;}'
   })
-  const dimensions = await page.evaluate(() => {
+  console.log('lazy', lazy)
+  const dimensions = await page.evaluate(async (lazy) => {
+    const Sleep = function (time){
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve('')
+        }, time || 1000)
+      })
+    }
     const widthArr = []
     const bodyWidth = document.querySelector("body")
     const htmlWidth = document.querySelector("html")
@@ -67,11 +62,27 @@ const createOnline = async (path) => {
       widthArr.push(wrapWidth.scrollWidth)
     }
     widthArr.sort()
+    console.log(lazy)
+    if (lazy) {
+      // 滚动页面，显示懒加载图片
+      const height = document.body.scrollHeight
+      const page = Math.ceil(height / 700)
+      for (let a = 0; a < page; a++) {
+        window.scrollTo({
+          top: (a + 1) * 700,
+          left: 0,
+          behavior: 'smooth'
+        })
+        await Sleep(500)
+      }
+    }
     return {
       arr: widthArr,
       width: widthArr[widthArr.length - 1] + 100,
+      height: document.body.scrollHeight
     };
-  });
+  }, lazy);
+  await sleep(2000)
   const headerTemplate = `<div
         style="width:80%;margin:0 auto;font-size:8px;border-bottom:1px solid #ddd;padding:10px 0;display: flex; justify-content: space-between;">
         <span>我是页眉</span>
