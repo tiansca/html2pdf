@@ -2,17 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ejs</title>
+  <title><%=title%></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <style>
     /*body{*/
     /*  padding: 50px;*/
     /*  width: 800px*/
     /*}*/
+    input{
+      line-height: 28px;
+      margin: 0 4px;
+      width: 200px;
+      flex-grow: 1;
+    }
+    button{
+      background-color: #00B7FF;
+      color: #fff;
+      line-height: 28px;
+      padding: 6px 30px;
+      border: none;
+      border-radius: 3px;
+    }
+    .wrapper{
+      max-width: 400px;
+      margin: 0 auto;
+    }
   </style>
 </head>
 <body>
-<a href="http://www.baidu.com">跳转</a>
-<%=title%> <!-- ejs 的模版语法，读取变量 message | 是从 render 传递过来 -->
+<div class="wrapper">
+  <div style="display: flex;align-items: center;margin: 50px 0 20px">
+    <label>网页连接:</label>
+    <input type="text" id="url">
 
+  </div>
+  <div style="display: flex;align-items: center;justify-content: center">
+    <button onclick="submit()">转为PDF</button>
+  </div>
+</div>
 </body>
+<script>
+  const submit = function () {
+    let url = document.querySelector('#url').value
+    console.log(url)
+    if (!url) {
+      alert('连接不能为空')
+      return
+    }
+    url = encodeURIComponent(url)
+    window.open('http://localhost:3008?path=' + url)
+  }
+</script>
 </html>

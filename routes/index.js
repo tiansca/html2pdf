@@ -70,5 +70,8 @@ router.get('/download', async (ctx, next) => {
     root:path.resolve(__dirname, '../views/')
   })
 })
+router.get('/page', async (ctx, next) => {
+  await ctx.render('index.ejs', {title: 'html2pdf'})
+})
 
 module.exports = router
