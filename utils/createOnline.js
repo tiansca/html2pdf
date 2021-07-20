@@ -67,13 +67,15 @@ const createOnline = async (path, lazy) => {
       // 滚动页面，显示懒加载图片
       const height = document.body.scrollHeight
       const page = Math.ceil(height / 700)
-      for (let a = 0; a < page; a++) {
-        window.scrollTo({
-          top: (a + 1) * 700,
-          left: 0,
-          behavior: 'smooth'
-        })
-        await Sleep(500)
+      if (page < 30) {
+        for (let a = 0; a < page; a++) {
+          window.scrollTo({
+            top: (a + 1) * 700,
+            left: 0,
+            behavior: 'smooth'
+          })
+          await Sleep(500)
+        }
       }
     }
     return {
