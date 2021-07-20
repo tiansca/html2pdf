@@ -19,7 +19,7 @@ const createOnline = async (path) => {
     await page.goto(path, {
       waitUntil: ['load', // Remove the timeout
         'domcontentloaded',  //等待 “domcontentloaded” 事件触发
-        'networkidle0',
+        'networkidle2',
       ],
       timeout: 1000 * 60 * 3,
     })
