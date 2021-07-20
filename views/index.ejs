@@ -49,8 +49,11 @@
       alert('连接不能为空')
       return
     }
+    if (url.indexOf('http') === -1) {
+      url = `http://${url}`
+    }
     url = encodeURIComponent(url)
-    window.open('http://localhost:3008?path=' + url)
+    window.open(`http://<%=ip%>:3008?path=${url}`)
   }
 </script>
 </html>

@@ -3,6 +3,21 @@ const puppeteer = require('puppeteer')
 const send = require('koa-send')
 const createOnline = require('../utils/createOnline')
 const path = require('path')
+const os = require('os');
+///////////////////获取本机ip///////////////////////
+function getIPAdress() {
+  var interfaces = os.networkInterfaces();
+  console.log('interfaces',interfaces);
+  for (var devName in interfaces) {
+    var iface = interfaces[devName];
+    for (var i = 0; i < iface.length; i++) {
+      var alias = iface[i];
+      if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal) {
+        return alias.address;
+      }
+    }
+  }
+}
 
 const creat = async (pdf_string) => {
   const browser = await puppeteer.launch({
@@ -71,7 +86,7 @@ router.get('/download', async (ctx, next) => {
   })
 })
 router.get('/page', async (ctx, next) => {
-  await ctx.render('index.ejs', {title: 'html2pdf'})
+  await ctx.render('index.ejs', {title: 'html2pdf', ip: getIPAdress()})
 })
 
 module.exports = router
