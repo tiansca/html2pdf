@@ -5,7 +5,15 @@ const sleep = require('../utils/sleep')
 const createOnline = async (path, lazy) => {
   const browser = await puppeteer.launch({
     // args: ['--no-sandbox'],
-    args: ['--disable-dev-shm-usage', '--no-sandbox']
+    args: [
+      '--disable-dev-shm-usage',
+      '--disable-gpu',
+      '--disable-setuid-sandbox',
+      '--no-sandbox',
+      '--no-first-run',
+      '--no-zygote',
+      '--single-process'
+    ]
     // args: ['--disable-setuid-sandbox', '--no-sandbox'],
     // args: ['--disable-setuid-sandbox', '--no-sandbox', '--disable-dev-shm-usage'],
   });
