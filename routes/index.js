@@ -58,17 +58,18 @@ router.get('/', async (ctx, next) => {
   }
   const lazy = ctx.query.lazy || false
   console.log('url', url)
-  await createOnline(url,  lazy)
+  const pdfIndex = await createOnline(url,  lazy)
   // 已stream传输，前端下载而非预览，自定义文件名
   // ctx.set('Content-Type', 'application/octet-stream')
   // ctx.set("Content-Disposition", "attachment;filename=" + 'report.pdf');
-  await send(ctx, 'myResume.pdf', {
+  await send(ctx, `screen${pdfIndex}.pdf`, {
     root:path.resolve(__dirname, '../views/')
   })
 })
 
 router.get('/download', async (ctx, next) => {
-  await send(ctx, 'myResume.pdf', {
+  const pdfIndex = ctx.query.index || 0
+  await send(ctx, `screen${pdfIndex}.pdf`, {
     root:path.resolve(__dirname, '../views/')
   })
 })

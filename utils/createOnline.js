@@ -3,6 +3,7 @@ const Path = require('path')
 const sleep = require('../utils/sleep')
 
 const createOnline = async (path, lazy) => {
+  const pdfIndex = Math.round(Math.random() * 10)
   const browser = await puppeteer.launch({
     // args: ['--no-sandbox'],
     args: [
@@ -116,7 +117,7 @@ const createOnline = async (path, lazy) => {
 
   await page.pdf({
     // format: 'A4',
-    path: Path.resolve(__dirname, '../views/myResume.pdf'),
+    path: Path.resolve(__dirname, `../views/screen${pdfIndex}.pdf`),
     printBackground: true,
     // preferCSSPageSize: true,
     fullPage: true,
@@ -140,5 +141,6 @@ const createOnline = async (path, lazy) => {
   }
   // console.log(pages)
   await browser.close();
+  return pdfIndex
 }
 module.exports = createOnline
