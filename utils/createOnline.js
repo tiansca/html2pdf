@@ -9,6 +9,12 @@ const createOnline = async (path, lazy) => {
     // args: ['--disable-setuid-sandbox', '--no-sandbox'],
     // args: ['--disable-setuid-sandbox', '--no-sandbox', '--disable-dev-shm-usage'],
   });
+  const pages1 = await browser.pages()
+  if (pages1 && pages1.length > 0) {
+    for (let b = 0; b < pages1.length; b++) {
+      await pages1[b].close()
+    }
+  }
   let page = null
   try {
     page = await browser.newPage();
