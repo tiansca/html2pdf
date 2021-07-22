@@ -46,7 +46,7 @@ const createOnline = async (path, lazy) => {
     return
   }
   await sleep(500)
-  await page.waitForNavigation();
+  // await page.waitForNavigation();
   await page.addStyleTag({
     content: 'tr,img{page-break-before: always;page-break-inside:avoid;}'
   })
