@@ -23,10 +23,12 @@ const createOnline = async (path, lazy) => {
         'domcontentloaded',  //等待 “domcontentloaded” 事件触发
         // 'networkidle2', // 500ms内请求数不超过2个
       ],
-      timeout: 1000 * 60 * 3,
+      timeout: 1000 * 60,
     })
   } catch (e) {
+    // await page.close()
     await browser.close();
+    return
   }
   await page.addStyleTag({
     content: 'tr,img{page-break-before: always;page-break-inside:avoid;}'
@@ -115,7 +117,14 @@ const createOnline = async (path, lazy) => {
     },
     width: dimensions.width
   });
-
+  // await page.close()
+  const pages = await browser.pages()
+  if (pages && pages.length > 0) {
+    for (let b = 0; b < pages.length; b++) {
+      await pages[b].close()
+    }
+  }
+  // console.log(pages)
   await browser.close();
 }
 module.exports = createOnline
