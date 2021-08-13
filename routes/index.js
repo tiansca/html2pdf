@@ -74,7 +74,7 @@ router.get('/download', async (ctx, next) => {
   })
 })
 router.get('/page', async (ctx, next) => {
-  await ctx.render('index.ejs', {title: 'html2pdf', ip: '182.92.210.246'})
+  await ctx.render('index.ejs', {title: 'html2pdf', ip: '47.95.5.207'})
   // await ctx.render('index.ejs', {title: 'html2pdf', ip: 'localhost'})
 })
 
