@@ -45,11 +45,11 @@ const createOnline = async (path, lazy) => {
     await browser.close();
     return
   }
+  await page.addStyleTag({
+    content: 'tr,img{page-break-before: always;page-break-inside:avoid;} .Modal-wrapper{display: none!important;opacity: 0;}'
+  })
   await sleep(500)
   // await page.waitForNavigation();
-  await page.addStyleTag({
-    content: 'tr,img{page-break-before: always;page-break-inside:avoid;}'
-  })
   console.log('lazy', lazy)
   const dimensions = await page.evaluate(async (lazy) => {
     const Sleep = function (time){
@@ -96,6 +96,7 @@ const createOnline = async (path, lazy) => {
           await Sleep(500)
         }
       }
+
     }
     return {
       arr: widthArr,
