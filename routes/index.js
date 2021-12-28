@@ -74,8 +74,8 @@ router.get('/download', async (ctx, next) => {
   })
 })
 router.get('/page', async (ctx, next) => {
-  await ctx.render('index.ejs', {title: 'html2pdf', ip: '47.95.5.207'})
-  // await ctx.render('index.ejs', {title: 'html2pdf', ip: 'localhost'})
+  // await ctx.render('index.ejs', {title: 'html2pdf', ip: '47.95.5.207'})  // ip为部署服务器外网ip
+  await ctx.render('index.ejs', {title: 'html2pdf', ip: 'localhost'})  // 本地运行ip为localhost
 })
 
 module.exports = router
