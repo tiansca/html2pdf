@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer')
 const Path = require('path')
 const sleep = require('../utils/sleep')
 
-const createOnline = async (path, lazy) => {
+const createOnline = async (path, lazy, css) => {
   const pdfIndex = Math.round(Math.random() * 10)
   const browser = await puppeteer.launch({
     // args: ['--no-sandbox'],
@@ -27,6 +27,7 @@ const createOnline = async (path, lazy) => {
   let page = null
   try {
     page = await browser.newPage();
+    page.setViewport({width: 800, height: 1200})
   }  catch (e) {
     await browser.close();
     return
@@ -36,7 +37,7 @@ const createOnline = async (path, lazy) => {
     await page.goto(path, {
       waitUntil: ['load', // Remove the timeout
         'domcontentloaded',  //等待 “domcontentloaded” 事件触发
-        // 'networkidle2', // 500ms内请求数不超过2个
+        'networkidle0', // 500ms内请求数不超过0个
       ],
       timeout: 1000 * 60,
     })
@@ -45,8 +46,12 @@ const createOnline = async (path, lazy) => {
     await browser.close();
     return
   }
+  let cssContent = 'tr,img,canvas{page-break-inside:avoid!important;}.Modal-wrapper{display: none!important;opacity: 0;}'
+  if (css) {
+    cssContent = `${cssContent}${css}`
+  }
   await page.addStyleTag({
-    content: 'tr,img{page-break-before: always;page-break-inside:avoid;} .Modal-wrapper{display: none!important;opacity: 0;}'
+    content: cssContent
   })
   await sleep(500)
   // await page.waitForNavigation();
@@ -95,6 +100,10 @@ const createOnline = async (path, lazy) => {
           })
           await Sleep(500)
         }
+        window.scrollTo({
+          top: 0,
+          left: 0
+        })
       }
 
     }
@@ -119,10 +128,10 @@ const createOnline = async (path, lazy) => {
   console.log(Path.resolve(__dirname, '../views/myResume.pdf'))
 
   await page.pdf({
-    // format: 'A4',
+    format: 'Letter',
     path: Path.resolve(__dirname, `../views/screen${pdfIndex}.pdf`),
     printBackground: true,
-    // preferCSSPageSize: true,
+    preferCSSPageSize: true,
     fullPage: true,
     displayHeaderFooter: false,
     headerTemplate,
@@ -133,7 +142,7 @@ const createOnline = async (path, lazy) => {
       left: 50,
       right: 50,
     },
-    width: dimensions.width
+    width: dimensions.width - 100
   });
   // await page.close()
   const pages = await browser.pages()

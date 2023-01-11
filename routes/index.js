@@ -58,7 +58,11 @@ router.get('/', async (ctx, next) => {
   }
   const lazy = ctx.query.lazy || false
   console.log('url', url)
-  const pdfIndex = await createOnline(url,  lazy)
+  let css = ctx.query.css || ''
+  if (css) {
+    css = decodeURIComponent(css)
+  }
+  const pdfIndex = await createOnline(url,  lazy, css)
   // 已stream传输，前端下载而非预览，自定义文件名
   // ctx.set('Content-Type', 'application/octet-stream')
   // ctx.set("Content-Disposition", "attachment;filename=" + 'report.pdf');

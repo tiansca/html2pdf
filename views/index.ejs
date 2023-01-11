@@ -32,13 +32,17 @@
 <body>
 <div class="wrapper">
   <div style="display: flex;align-items: center;margin: 50px 0 20px">
-    <label>网页连接:</label>
+    <label>网页连接：</label>
     <input type="text" id="url">
 
   </div>
   <div style="display: flex;align-items: center;justify-content: center;margin: 20px 0">
     <input type="checkbox" value="lazy" name="lazy" id="lazy">
-    <label style="font-size: 14px;color: #333" for="lazy">是否开启懒加载</label>
+    <label style="font-size: 14px;color: #333" for="lazy">是否开启懒加载(滚动到页面底部)</label>
+  </div>
+  <div style="display: flex;align-items: center;justify-content: center;margin: 20px 0">
+    <label style="margin-right: 16px;flex-shrink: 0">添加css：</label>
+    <textarea type="text" id="css" style="width: 200px;flex-grow: 1"></textarea>
   </div>
   <div style="display: flex;align-items: center;justify-content: center">
     <button onclick="submit()">转为PDF</button>
@@ -59,11 +63,15 @@
     url = encodeURIComponent(url)
     const lazy = document.querySelector('#lazy').checked
     console.log(lazy)
+    let cssStyle = document.querySelector('#css').value
+    if (cssStyle) {
+      cssStyle = encodeURIComponent(cssStyle)
+    }
     if (lazy) {
-      window.open(`http://<%=ip%>:3008?path=${url}&lazy=true`)
+      window.open(`http://<%=ip%>:3008?path=${url}&lazy=true&css=${cssStyle}`)
       return;
     }
-    window.open(`http://<%=ip%>:3008?path=${url}`)
+    window.open(`http://<%=ip%>:3008?path=${url}&css=${cssStyle}`)
   }
 </script>
 </html>
