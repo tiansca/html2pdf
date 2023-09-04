@@ -57,6 +57,7 @@ router.get('/', async (ctx, next) => {
   let type = 'preview'
   const headLeft = ctx.query.headLeft
   const headLRight = ctx.query.headRight
+  const cover = ctx.query.cover === 'true'
   if (ctx.query.path) {
     url = ctx.query.path
   }
@@ -72,7 +73,8 @@ router.get('/', async (ctx, next) => {
     css = decodeURIComponent(css)
   }
   try {
-    const pdfFile = await createOnline(decodeURIComponent(url),  lazy, css, headLeft, headLRight)
+      const pdfFile = await createOnline(decodeURIComponent(url),  lazy, css, headLeft, headLRight, cover)
+
     // 已stream传输，前端下载而非预览，自定义文件名
     // ctx.set('Content-Type', 'application/octet-stream')
     // ctx.set("Content-Disposition", "attachment;filename=" + 'report.pdf');

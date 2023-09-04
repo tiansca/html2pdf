@@ -1,14 +1,23 @@
 const puppeteer = require('puppeteer')
 const Path = require('path')
 const sleep = require('../utils/sleep')
+const toPdf = require('./toPdf')
+const mergePdf = require('../utils/mergePdf')
 
-const createOnline = async (path, lazy, css, headLeft, headRight) => {
+const createOnline = async (path, lazy, css, headLeft, headRight, cover, pageRange = '1-') => {
+  // path 网页链接
+  // lazy 是否懒加载
+  // css 添加指定的css样式
+  // headLeft 页面左侧文案
+  // headRight 页面右侧文案
+  // cover 是否为封面，封面页边距为0并且无页眉页脚
+  // pageRange 打印范围，默认整个文档
   console.log('url', path)
   const pdfIndex = Math.round(Math.random() * 10)
   const browser = await puppeteer.launch({
     // args: ['--no-sandbox'],
     args: [
-      '--disable-dev-shm-usage',
+      '--disable-dev-shm-usage', // docker部署时，这将会写入共享内存文件/tmp而不是/dev/shm.
       // '--disable-gpu',
       '--disable-setuid-sandbox',
       '--no-sandbox',
@@ -126,7 +135,7 @@ const createOnline = async (path, lazy, css, headLeft, headRight) => {
   }, lazy);
   // await sleep(2000)
   const headerTemplate = `<div
-        style="width: 595px;height: 30px;box-sizing: border-box;color: #fff;font-size:8px;padding:0  10px;display: flex; align-items: center;justify-content: space-between;background-color: #5897fa;-webkit-print-color-adjust:exact;position: fixed;top: 0">
+        style="width: 595px;height: 30px;box-sizing: border-box;color: #fff;font-size:12px;padding:0  10px;display: flex; align-items: center;justify-content: space-between;background-color: #5897fa;-webkit-print-color-adjust:exact;position: fixed;top: 0">
         <div style="width: 100%; display: flex;justify-content: space-between">
           <span>${headLeft}</span>
           <span>${headRight}</span>
@@ -136,25 +145,70 @@ const createOnline = async (path, lazy, css, headLeft, headRight) => {
   const footerTemplate = '<div style="box-sizing: border-box;height: 18px;text-align: right;width: 595px;padding-right: 20px;font-size: 10px; margin-bottom: -10px;color: #666"> <span class="pageNumber"></span> / <span class="totalPages"></span> </div>'
 
   const showHeader = !!headLeft || !!headRight
-
-  const pdfFile = await page.pdf({
-    format: 'A4',
-    // path: Path.resolve(__dirname, `../views/screen${pdfIndex}.pdf`),
-    printBackground: true,
-    preferCSSPageSize: true,
-    fullPage: true,
-    displayHeaderFooter: showHeader,
-    headerTemplate,
-    footerTemplate,
-    margin: {
-      top: showHeader? 50 : 30,
-      bottom: showHeader?  40 : 30,
-      left: 20,
-      right: 20,
-    },
-    scale: 1
-  });
-
+  const defaultMargin = {
+    top: showHeader? 50 : 30,
+    bottom: showHeader?  40 : 30,
+    left: 20,
+    right: 20,
+  }
+  const coverMargin = {
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+  }
+  let pdfFile = ''
+  if (!cover) {
+    console.log()
+    // 正常导出
+    try {
+      pdfFile = await toPdf(page, {
+          format: 'A4',
+          printBackground: true,
+          preferCSSPageSize: true,
+          fullPage: true,
+          displayHeaderFooter: showHeader,
+          headerTemplate,
+          footerTemplate,
+          margin: defaultMargin,
+          scale: 1,
+          pageRanges: '1-'
+      })
+    } catch (e) {
+      console.log(e)
+      pdfFile = Promise.reject(e)
+    }
+  } else {
+    try {
+      const res = await Promise.all([toPdf(page, {
+        format: 'A4',
+        printBackground: true,
+        preferCSSPageSize: true,
+        fullPage: true,
+        displayHeaderFooter: false,
+        headerTemplate,
+        footerTemplate,
+        margin: coverMargin,
+        scale: 1,
+        pageRanges: '1'
+      }), toPdf(page, {
+        format: 'A4',
+        printBackground: true,
+        preferCSSPageSize: true,
+        fullPage: true,
+        displayHeaderFooter: showHeader,
+        headerTemplate,
+        footerTemplate,
+        margin: defaultMargin,
+        scale: 1,
+        pageRanges: '2-'
+      })])
+      pdfFile = await mergePdf(res)
+    } catch (e) {
+      console.log(e)
+      pdfFile = Promise.reject(e)
+    }
+  }
   page.close()
   browser.close()
   console.log(dimensions)

@@ -43,5 +43,7 @@ app.use(users.routes(), users.allowedMethods())
 app.on('error', (err, ctx) => {
   console.error('server error', err, ctx)
 });
-
+// app.set('env', 'production');
+var env = process.env.NODE_ENV
+console.groupCollapsed(env)
 module.exports = app
