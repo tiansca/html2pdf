@@ -9,7 +9,7 @@
     /*  padding: 50px;*/
     /*  width: 800px*/
     /*}*/
-    #url{
+    #url, .my-input{
       line-height: 28px;
       margin: 0 4px;
       width: 200px;
@@ -27,6 +27,10 @@
       max-width: 400px;
       margin: 0 auto;
     }
+    .my-label{
+      display: inline-block;
+      width: 84px;
+    }
   </style>
 </head>
 <body>
@@ -34,15 +38,31 @@
   <div style="display: flex;align-items: center;margin: 50px 0 20px">
     <label>网页连接：</label>
     <input type="text" id="url">
-
   </div>
-  <div style="display: flex;align-items: center;justify-content: center;margin: 20px 0">
-    <input type="checkbox" value="lazy" name="lazy" id="lazy">
-    <label style="font-size: 14px;color: #333" for="lazy">是否开启懒加载(滚动到页面底部)</label>
+  <div style="display: flex;align-items: center;margin: 20px 0">
+    <span>导出方式：</span>
+    <div style="width: 200px">
+      <input class="type-radio" type="radio" value="preview" name="type" id="preview" checked>
+      <label style="font-size: 14px;color: #333" for="preview">预览</label>
+      <input class="type-radio" type="radio" value="download" name="type" id="download">
+      <label style="font-size: 14px;color: #333" for="download">下载</label>
+    </div>
   </div>
   <div style="display: flex;align-items: center;justify-content: center;margin: 20px 0">
     <label style="margin-right: 16px;flex-shrink: 0">添加css：</label>
     <textarea type="text" id="css" style="width: 200px;flex-grow: 1"></textarea>
+  </div>
+  <div style="display: flex;align-items: center;margin: 20px 0 20px">
+    <label class="my-label">页眉-左：</label>
+    <input type="text" id="head-left" class="my-input">
+  </div>
+  <div style="display: flex;align-items: center;margin: 20px 0 20px">
+    <label class="my-label">页眉-右：</label>
+    <input type="text" id="head-right" class="my-input">
+  </div>
+  <div style="display: flex;align-items: center;justify-content: center;margin: 20px 0">
+    <input type="checkbox" value="lazy" name="lazy" id="lazy">
+    <label style="font-size: 14px;color: #333" for="lazy">是否开启懒加载(滚动到页面底部)</label>
   </div>
   <div style="display: flex;align-items: center;justify-content: center">
     <button onclick="submit()">转为PDF</button>
@@ -62,16 +82,24 @@
     }
     url = encodeURIComponent(url)
     const lazy = document.querySelector('#lazy').checked
-    console.log(lazy)
+    const typeRadio = document.querySelectorAll('.type-radio')
+    let type = ''
+    const headLeft = document.querySelector('#head-left').value
+    const headRight = document.querySelector('#head-right').value
+    for (let a = 0; a < typeRadio.length; a++) {
+      if (typeRadio[a].checked) {
+        type = typeRadio[a].value
+      }
+    }
     let cssStyle = document.querySelector('#css').value
     if (cssStyle) {
       cssStyle = encodeURIComponent(cssStyle)
     }
     if (lazy) {
-      window.open(`http://<%=ip%>:3008?path=${url}&lazy=true&css=${cssStyle}`)
+      window.open(`http://<%=ip%>:3008?path=${url}&lazy=true&css=${cssStyle}&type=${type}&headLeft=${headLeft}&headRight=${headRight}`)
       return;
     }
-    window.open(`http://<%=ip%>:3008?path=${url}&css=${cssStyle}`)
+    window.open(`http://<%=ip%>:3008?path=${url}&css=${cssStyle}&type=${type}&headLeft=${headLeft}&headRight=${headRight}`)
   }
 </script>
 </html>

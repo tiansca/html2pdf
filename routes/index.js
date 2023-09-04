@@ -53,22 +53,48 @@ const creat = async (pdf_string) => {
 
 router.get('/', async (ctx, next) => {
   let url = 'https://www.baidu.com'
+  let fileName = '下载.pdf'
+  let type = 'preview'
+  const headLeft = ctx.query.headLeft
+  const headLRight = ctx.query.headRight
   if (ctx.query.path) {
     url = ctx.query.path
   }
+  if (ctx.query.fileName) {
+    fileName = ctx.query.fileName
+  }
+  if(ctx.query.type) {
+    type = ctx.query.type
+  }
   const lazy = ctx.query.lazy || false
-  console.log('url', url)
   let css = ctx.query.css || ''
   if (css) {
     css = decodeURIComponent(css)
   }
-  const pdfIndex = await createOnline(url,  lazy, css)
-  // 已stream传输，前端下载而非预览，自定义文件名
-  // ctx.set('Content-Type', 'application/octet-stream')
-  // ctx.set("Content-Disposition", "attachment;filename=" + 'report.pdf');
-  await send(ctx, `screen${pdfIndex}.pdf`, {
-    root:path.resolve(__dirname, '../views/')
-  })
+  try {
+    const pdfFile = await createOnline(decodeURIComponent(url),  lazy, css, headLeft, headLRight)
+    // 已stream传输，前端下载而非预览，自定义文件名
+    // ctx.set('Content-Type', 'application/octet-stream')
+    // ctx.set("Content-Disposition", "attachment;filename=" + 'report.pdf');
+    // await send(ctx, `screen${pdfIndex}.pdf`, {
+    //   root:path.resolve(__dirname, '../views/')
+    // })
+
+    ctx.set('Content-Type', 'application/pdf')
+    if (type === 'preview') {
+      ctx.set("Content-Disposition", "inline;filename=" + encodeURIComponent(fileName)); // 预览
+    } else {
+      ctx.set("Content-Disposition", "attachment;filename=" + encodeURIComponent(fileName)); // 下载
+    }
+    ctx.body = pdfFile
+  } catch (e) {
+    console.log(e)
+    ctx.response.body = {
+      code: -1,
+      error: e
+    }
+  }
+
 })
 
 router.get('/download', async (ctx, next) => {
