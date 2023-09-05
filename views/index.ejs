@@ -60,6 +60,10 @@
     <label class="my-label">页眉-右：</label>
     <input type="text" id="head-right" class="my-input">
   </div>
+  <div style="display: flex;align-items: center;margin: 20px 0 20px">
+    <label class="my-label">文件名：</label>
+    <input type="text" id="fileName" class="my-input">
+  </div>
   <div style="display: flex;align-items: center;justify-content: left;margin: 20px 0;padding-left: 86px">
     <input type="checkbox" value="lazy" name="lazy" id="lazy">
     <label style="font-size: 14px;color: #333" for="lazy">是否开启懒加载(滚动到页面底部)</label>
@@ -90,6 +94,7 @@
     let type = ''
     const headLeft = document.querySelector('#head-left').value
     const headRight = document.querySelector('#head-right').value
+    const fileName = document.querySelector('#fileName').value
     const cover = document.querySelector('#cover').checked
     for (let a = 0; a < typeRadio.length; a++) {
       if (typeRadio[a].checked) {
@@ -102,10 +107,10 @@
     }
     console.log()
     if (lazy) {
-      window.open(`${location.origin}?path=${url}&lazy=true&css=${cssStyle}&type=${type}&headLeft=${headLeft}&headRight=${headRight}&cover=${cover}`)
+      window.open(`${location.origin}?path=${url}&lazy=true&css=${cssStyle}&type=${type}&headLeft=${headLeft}&headRight=${headRight}&cover=${cover}&fileName=${fileName}`)
       return;
     }
-    window.open(`${location.origin}?path=${url}&css=${cssStyle}&type=${type}&headLeft=${headLeft}&headRight=${headRight}&cover=${cover}`)
+    window.open(`${location.origin}?path=${url}&css=${cssStyle}&type=${type}&headLeft=${headLeft}&headRight=${headRight}&cover=${cover}&fileName=${fileName}`)
   }
 </script>
 </html>
