@@ -209,8 +209,16 @@ const createOnline = async (path, lazy, css, headLeft, headRight, cover, pageRan
       pdfFile = Promise.reject(e)
     }
   }
-  page.close()
-  browser.close()
+  try {
+    page && page.close()
+  } catch (e) {
+    console.log('page close error', e)
+  }
+  try {
+    browser && browser.close()
+  } catch (e) {
+    console.log('browser close error', e)
+  }
   console.log(dimensions)
   return pdfFile
 }
