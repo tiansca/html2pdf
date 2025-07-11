@@ -209,11 +209,13 @@ const createOnline = async (path, lazy, css, headLeft, headRight, cover, pageRan
       pdfFile = Promise.reject(e)
     }
   }
-  try {
-    page && page.close()
-  } catch (e) {
-    console.log('page close error', e)
-  }
+  // try {
+  //   if (page && !page.isClosed()) {
+  //     page && page.close()
+  //   }
+  // } catch (e) {
+  //   console.log('page close error', e)
+  // }
   try {
     browser && browser.close()
   } catch (e) {
